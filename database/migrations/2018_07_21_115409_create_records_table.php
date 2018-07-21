@@ -18,6 +18,7 @@ class CreateRecordsTable extends Migration
             $table->string('openid');
             $table->string('word');
             $table->boolean('correct')->default(0);
+            $table->string('picture');
             $table->timestamps();
         });
     }
