@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Response;
+use HTTP_Request2;
 
 class ApiController extends Controller
 {
@@ -16,7 +17,7 @@ class ApiController extends Controller
         $api_url = env("AZURE_CV_BASE_URL") . "analyze";
 
 
-        $request = new \HTTP_Request2($api_url);
+        $request = new HTTP_Request2($api_url);
         $url = $request->getUrl();
 
         $headers = array(
@@ -36,11 +37,12 @@ class ApiController extends Controller
 
         $request->setMethod(HTTP_Request2::METHOD_POST);
 
-        // Request body parameters
-        $body = json_encode(array('url' => $imageUrl));
+        $handle = fopen($path, "rb");
+        $contents = fread($handle, filesize($path));
+        fclose($handle);
 
         // Request body
-        $request->setBody($body);
+        $request->setBody($contents);
 
         try
         {
