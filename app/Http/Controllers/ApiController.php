@@ -58,7 +58,7 @@ class ApiController extends Controller
     public function uploadPhoto(Request $request)
     {
         $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
-        $word = \Illuminate\Support\Facades\Request::header('word');
+        $word_correct = \Illuminate\Support\Facades\Request::header('word');
 
         $client = new GuzzleHttp\Client();
 
@@ -84,6 +84,10 @@ class ApiController extends Controller
             foreach ($tags as $word) {
                 $question = Question::firstOrNew(["word" => $word]);
                 $question->count += 1;
+                if ($question->count >= env("WORD_ENABLE_THRESHOLD"))
+                {
+                    $question->enabled = true;
+                }
                 $question->save();
             }
 
@@ -92,8 +96,8 @@ class ApiController extends Controller
                 "data" => [
                     "description" => $data->description->captions[0],
                     "tags" => $data->description->tags,
-                    "answer" => $word,
-                    "correct" => (in_array($word, $data->description->tags)) ? true : false
+                    "answer" => $word_correct,
+                    "correct" => in_array($word_correct, $data->description->tags) ? true : false
                 ]
             ]);
 
