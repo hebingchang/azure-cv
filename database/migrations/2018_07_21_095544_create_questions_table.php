@@ -16,7 +16,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
             $table->string("word");
-            $table->boolean("enabled");
+            $table->boolean("enabled")->default(false);
             $table->integer("count")->default(0);
             $table->timestamps();
         });
