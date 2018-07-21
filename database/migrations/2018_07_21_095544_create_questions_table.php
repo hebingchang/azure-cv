@@ -17,7 +17,7 @@ class CreateQuestionsTable extends Migration
             $table->increments('id');
             $table->string("word");
             $table->boolean("enabled");
-            $table->integer("count");
+            $table->integer("count")->default(0);
             $table->timestamps();
         });
     }

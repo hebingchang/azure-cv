@@ -48,7 +48,7 @@ class ApiController extends Controller
 
     public function getQuestion()
     {
-        $question = Question::inRandomOrder()->first();
+        $question = Question::where("enabled", true)->inRandomOrder()->first();
         return Response::json([
             "success" => true,
             "word" => $question->word,
@@ -78,9 +78,21 @@ class ApiController extends Controller
                 'headers' => $headers,
                 'body' => $contents
             ]);
+            $data = json_decode($r->getBody());
+            $tags = array_slice($data->description->tags, 0, 5);
+
+            foreach ($tags as $word) {
+                $question = Question::firstOrNew(["word" => $word]);
+                $question->count += 1;
+                $question->save();
+            }
+
             return Response::json([
                 "success" => true,
-                "data" => json_decode($r->getBody())
+                "data" => [
+                    "description" => $data->description->captions[0],
+                    "tags" => $data->description->tags,
+                ]
             ]);
 
         } catch (GuzzleException $e) {
