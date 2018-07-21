@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Response;
 use HTTP_Request2;
+use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
@@ -37,7 +38,7 @@ class ApiController extends Controller
 
         $request->setMethod(HTTP_Request2::METHOD_POST);
 
-        $handle = fopen($path, "rb");
+        $handle = fopen(Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $path, "rb");
         $contents = fread($handle, filesize($path));
         fclose($handle);
 
