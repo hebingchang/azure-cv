@@ -17,4 +17,6 @@ use Illuminate\Http\Request;
     return $request->user();
 }); */
 
-Route::post('/photo/upload', "ApiController@uploadPhoto");
+Route::post('/question/answer/', "ApiController@uploadPhoto");
+Route::post('/question/new', "ApiController@getQuestion");
+Route::post('/openid', "ApiController@apiOpenid");

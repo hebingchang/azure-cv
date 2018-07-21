@@ -2,21 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Question;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
+use GuzzleHttp;
 use Illuminate\Support\Facades\Response;
-use HTTP_Request2;
 use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
+    public function getWechatAccessToken()
+    {
+        $client = new GuzzleHttp\Client();
+        $appid = env("WECHAT_APPID");
+        $secret = env("WECHAT_SECRET");
+
+        try {
+            $r = $client->request('GET', "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$secret}");
+            return json_decode($r->getBody())->access_token;
+        } catch (GuzzleHttp\Exception\GuzzleException $e) {
+            return false;
+        }
+
+    }
+
+    public function apiOpenid(Request $request)
+    {
+        $code = $request->code;
+        $client = new GuzzleHttp\Client();
+        $appid = env("WECHAT_APPID");
+        $secret = env("WECHAT_SECRET");
+
+        try {
+            $r = $client->get("https://api.weixin.qq.com/sns/jscode2session?appid=$appid&secret=$secret&js_code=$code&grant_type=authorization_code");
+            return Response::json(array(
+                "success" => true,
+                "openid" => json_decode($r->getBody())->openid
+            ));
+        } catch (GuzzleHttp\Exception\GuzzleException $e) {
+            return Response::json(array(
+                "success" => false,
+            ));
+        }
+    }
+
+    public function getQuestion()
+    {
+        $question = Question::inRandomOrder()->first();
+        return Response::json([
+            "success" => true,
+            "word" => $question->word,
+        ]);
+    }
+
     public function uploadPhoto(Request $request)
     {
         $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
 
 
-        $client = new Client();
+        $client = new GuzzleHttp\Client();
 
         $handle = fopen($path, "rb");
         $contents = fread($handle, filesize($path));
