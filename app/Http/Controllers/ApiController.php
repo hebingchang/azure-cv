@@ -92,6 +92,7 @@ class ApiController extends Controller
                 "data" => [
                     "description" => $data->description->captions[0],
                     "tags" => $data->description->tags,
+                    "answer" => $word,
                     "correct" => (in_array($word, $data->description->tags)) ? true : false
                 ]
             ]);
