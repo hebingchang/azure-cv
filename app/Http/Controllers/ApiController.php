@@ -149,4 +149,18 @@ class ApiController extends Controller
                 ->get()
         ]);
     }
+
+    public function apiPicture(Request $request)
+    {
+        $picture_id = $request->input('picture_id');
+
+        $storagePath = 'uploads/' . $picture_id;
+
+        $file = Storage::get($storagePath);
+        $type = Storage::mimeType($storagePath);
+        $response = Response::make($file, 200)->header("Content-Type", $type);
+
+        return $response;
+
+    }
 }
