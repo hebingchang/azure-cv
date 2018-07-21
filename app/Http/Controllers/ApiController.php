@@ -15,18 +15,18 @@ class ApiController extends Controller
     {
         $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
 
-        $api_url = env("AZURE_CV_BASE_URL") . "analyze";
 
+        $client = new Client();
 
-        $request = new HTTP_Request2($api_url);
-        $url = $request->getUrl();
+        $handle = fopen($path, "rb");
+        $contents = fread($handle, filesize($path));
+        fclose($handle);
 
         $headers = array(
             // Request headers
             'Content-Type' => 'application/json',
             'Ocp-Apim-Subscription-Key' => env('SUBSCRIPTION_KEY')
         );
-        $request->setHeader($headers);
 
         $parameters = array(
             // Request parameters
@@ -34,30 +34,18 @@ class ApiController extends Controller
             'details' => '',
             'language' => 'en'
         );
-        $url->setQueryVariables($parameters);
 
-        $request->setMethod(HTTP_Request2::METHOD_POST);
+        try {
+            $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze", [
+                'body' => $contents,
+                'headers' => $headers,
+                'query' => $parameters,
+            ]);
 
-        $handle = fopen($path, "rb");
-        $contents = fread($handle, filesize($path));
-        fclose($handle);
-
-        // Request body
-        $request->setBody($contents);
-
-        try
-        {
-            $response = $request->send();
-            return Response::json(array(
-                "success" => true,
-                "data" => json_decode($response->getBody())
-            ));
+            return $r->getBody();
+        } catch (GuzzleException $e) {
         }
-        catch (HttpException $ex)
-        {
-            return Response::json(array(
-                "success" => false,
-            ));
-        }
+
+
     }
 }
