@@ -159,7 +159,7 @@ class ApiController extends Controller
 
         $path = storage_path("app/uploads/" . $picture_id);
 
-        return Image::make($path)->response();
+        return $path;
 
     }
 }
