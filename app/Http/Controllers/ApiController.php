@@ -29,7 +29,7 @@ class ApiController extends Controller
         );
 
 
-        $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze?visualFeatures=Categories,Description,Color", [
+        $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze?visualFeatures=Categories%2CDescription%2CColor", [
             'headers' => $headers,
             'body' => $contents
         ]);
