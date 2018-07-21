@@ -11,6 +11,7 @@ use GuzzleHttp;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class ApiController extends Controller
 {
@@ -158,13 +159,7 @@ class ApiController extends Controller
 
         $path = storage_path("app/uploads/" . $picture_id);
 
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
-        return $response;
+        return Image::make($path)->response();
 
     }
 }
