@@ -58,7 +58,8 @@ class ApiController extends Controller
 
     public function uploadPhoto(Request $request)
     {
-        $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
+        $filename = $request->file('picture')->store('uploads');
+        $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $filename;
         $word_correct = \Illuminate\Support\Facades\Request::header('word');
         $openid = \Illuminate\Support\Facades\Request::header('openid');
 
@@ -96,6 +97,7 @@ class ApiController extends Controller
             $record = new Record;
             $record->word = $word_correct;
             $record->correct = in_array($word_correct, array_slice($data->description->tags, 0, env("TAG_SLICE_THRESHOLD")));
+            $record->picture = $filename;
             $record->openid = $openid;
             $record->save();
 
