@@ -13,7 +13,7 @@ class ApiController extends Controller
 {
     public function uploadPhoto(Request $request)
     {
-        $path = $request->file('picture')->store('uploads');
+        $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
 
         $api_url = env("AZURE_CV_BASE_URL") . "analyze";
 
@@ -38,7 +38,7 @@ class ApiController extends Controller
 
         $request->setMethod(HTTP_Request2::METHOD_POST);
 
-        $handle = fopen(Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $path, "rb");
+        $handle = fopen($path, "rb");
         $contents = fread($handle, filesize($path));
         fclose($handle);
 
