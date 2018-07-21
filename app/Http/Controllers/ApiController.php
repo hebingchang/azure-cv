@@ -31,12 +31,7 @@ class ApiController extends Controller
 
         $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze?visualFeatures=Categories,Description,Color", [
             'headers' => $headers,
-            'multipart' => [
-                [
-                    'name'     => 'picture',
-                    'contents' => fopen($path, 'rb'),//this path is image save temperary path
-                ]
-            ]
+            'body' => $contents
         ]);
 
         return Response::json(json_decode($r->getBody()));
