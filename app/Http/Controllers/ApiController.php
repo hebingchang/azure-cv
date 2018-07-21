@@ -58,8 +58,8 @@ class ApiController extends Controller
 
     public function uploadPhoto(Request $request)
     {
-        $filename = $request->file('picture')->store('uploads');
-        $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $filename;
+        $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
+        $filename = basename($path);
         $word_correct = \Illuminate\Support\Facades\Request::header('word');
         $openid = \Illuminate\Support\Facades\Request::header('openid');
 
@@ -134,20 +134,19 @@ class ApiController extends Controller
         }
 
         if (!isset($limit)) {
-            return Response::json([
-                "success" => true,
-                "data" => Record::where("openid", $openid)
-                    ->offset($offset)
-                    ->get()
-            ]);
-        } else {
-            return Response::json([
-                "success" => true,
-                "data" => Record::where("openid", $openid)
-                    ->offset($offset)
-                    ->limit($limit)
-                    ->get()
-            ]);
+            $limit = 10;
         }
+
+        $count = Record::where("openid", $openid)->count();
+        $is_end = (($offset + $limit) >= $count);
+
+        return Response::json([
+            "success" => true,
+            "is_end" => $is_end,
+            "data" => Record::where("openid", $openid)
+                ->offset($offset)
+                ->limit($limit)
+                ->get()
+        ]);
     }
 }
