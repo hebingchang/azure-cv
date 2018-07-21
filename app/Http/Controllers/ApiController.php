@@ -29,12 +29,23 @@ class ApiController extends Controller
         );
 
 
-        $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze?visualFeatures=Categories%2CDescription%2CColor", [
-            'headers' => $headers,
-            'body' => $contents
-        ]);
+        try {
+            $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze?visualFeatures=Categories%2CDescription%2CColor", [
+                'headers' => $headers,
+                'body' => $contents
+            ]);
+            return Response::json([
+                "success" => true,
+                "data" => json_decode($r->getBody())
+            ]);
 
-        return Response::json(json_decode($r->getBody()));
+        } catch (GuzzleException $e) {
+            return Response::json([
+                "success" => false,
+            ]);
+
+        }
+
 
 
     }
