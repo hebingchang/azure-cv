@@ -121,4 +121,33 @@ class ApiController extends Controller
 
 
     }
+
+
+    public function apiHistory(Request $request)
+    {
+        $offset = $request->input('offset');
+        $limit = $request->input('limit');
+        $openid = \Illuminate\Support\Facades\Request::header('openid');
+
+        if (!isset($offset)) {
+            $offset = 0;
+        }
+
+        if (!isset($limit)) {
+            return Response::json([
+                "success" => true,
+                "data" => Record::where("openid", $openid)
+                    ->offset($offset)
+                    ->get()
+            ]);
+        } else {
+            return Response::json([
+                "success" => true,
+                "data" => Record::where("openid", $openid)
+                    ->offset($offset)
+                    ->limit($limit)
+                    ->get()
+            ]);
+        }
+    }
 }

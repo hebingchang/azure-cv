@@ -20,3 +20,4 @@ use Illuminate\Http\Request;
 Route::post('/question/answer', "ApiController@uploadPhoto");
 Route::post('/question/new', "ApiController@getQuestion");
 Route::post('/openid', "ApiController@apiOpenid");
+Route::post('/question/history', "ApiController@apiHistory");
