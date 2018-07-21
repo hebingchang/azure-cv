@@ -46,7 +46,7 @@ class ApiController extends Controller
         } catch (GuzzleException $e) {
             return Response::json(array(
                 "success" => false
-            ))
+            ));
 
         }
 
