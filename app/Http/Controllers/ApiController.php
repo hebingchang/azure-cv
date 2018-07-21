@@ -24,7 +24,7 @@ class ApiController extends Controller
 
         $headers = array(
             // Request headers
-            'Content-Type' => 'application/json',
+            'Content-Type' => 'application/octet-stream',
             'Ocp-Apim-Subscription-Key' => env('SUBSCRIPTION_KEY')
         );
 
