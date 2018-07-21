@@ -95,7 +95,7 @@ class ApiController extends Controller
 
             $record = new Record;
             $record->word = $word_correct;
-            $record->correct = in_array($word_correct, array_slice($data->description->tags, "0", env("TAG_SLICE_THRESHOLD")));
+            $record->correct = in_array($word_correct, array_slice($data->description->tags, 0, env("TAG_SLICE_THRESHOLD")));
             $record->openid = $openid;
             $record->save();
 
@@ -105,7 +105,7 @@ class ApiController extends Controller
                     "description" => $data->description->captions[0],
                     "tags" => $data->description->tags,
                     "answer" => $word_correct,
-                    "correct" => in_array($word_correct, array_slice($data->description->tags, "0", env("TAG_SLICE_THRESHOLD"))) ? true : false
+                    "correct" => in_array($word_correct, array_slice($data->description->tags, 0, env("TAG_SLICE_THRESHOLD"))) ? true : false
                 ]
             ]);
 
