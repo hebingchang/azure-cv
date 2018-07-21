@@ -156,7 +156,7 @@ class ApiController extends Controller
     {
         $picture_id = $request->input('picture_id');
 
-        $path = storage_path("uploads/" . $picture_id);
+        $path = storage_path("app/uploads/" . $picture_id);
 
         $file = File::get($path);
         $type = File::mimeType($path);
