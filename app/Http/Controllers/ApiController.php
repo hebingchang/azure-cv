@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Question;
+use App\Record;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use GuzzleHttp;
@@ -59,6 +60,7 @@ class ApiController extends Controller
     {
         $path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/" . $request->file('picture')->store('uploads');
         $word_correct = \Illuminate\Support\Facades\Request::header('word');
+        $openid = \Illuminate\Support\Facades\Request::header('openid');
 
         $client = new GuzzleHttp\Client();
 
@@ -91,13 +93,19 @@ class ApiController extends Controller
                 $question->save();
             }
 
+            $record = new Record;
+            $record->word = $word_correct;
+            $record->correct = in_array($word_correct, array_slice($data->description->tags, "0", env("TAG_SLICE_THRESHOLD")));
+            $record->openid = $openid;
+            $record->save();
+
             return Response::json([
                 "success" => true,
                 "data" => [
                     "description" => $data->description->captions[0],
                     "tags" => $data->description->tags,
                     "answer" => $word_correct,
-                    "correct" => in_array($word_correct, $data->description->tags) ? true : false
+                    "correct" => in_array($word_correct, array_slice($data->description->tags, "0", env("TAG_SLICE_THRESHOLD"))) ? true : false
                 ]
             ]);
 
