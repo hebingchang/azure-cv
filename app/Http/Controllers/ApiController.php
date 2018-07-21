@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use GuzzleHttp;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
@@ -155,16 +156,15 @@ class ApiController extends Controller
     {
         $picture_id = $request->input('picture_id');
 
-        $storagePath = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . "/uploads/" . $picture_id;
+        $path = "uploads/" . $picture_id;
 
-        try {
-            $file = Storage::disk('local')->get($storagePath);
-            $type = Storage::disk('local')->mimeType($storagePath);
-            $response = Response::make($file, 200)->header("Content-Type", $type);
+        $file = File::get($path);
+        $type = File::mimeType($path);
 
-            return $response;
-        } catch (FileNotFoundException $e) {
-        }
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
 
     }
 }
