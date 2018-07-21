@@ -42,9 +42,12 @@ class ApiController extends Controller
                 'query' => $parameters,
             ]);
 
-            return Response::json($r->getBody());
+            return Response::json(json_decode($r->getBody()));
         } catch (GuzzleException $e) {
-            
+            return Response::json(array(
+                "success" => false
+            ))
+
         }
 
 
