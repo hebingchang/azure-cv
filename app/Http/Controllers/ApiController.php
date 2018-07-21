@@ -28,27 +28,13 @@ class ApiController extends Controller
             'Ocp-Apim-Subscription-Key' => env('SUBSCRIPTION_KEY')
         );
 
-        $parameters = array(
-            // Request parameters
-            'visualFeatures' => 'Categories,Description',
-            'details' => '',
-            'language' => 'en'
-        );
 
-        try {
-            $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze", [
-                'body' => $contents,
-                'headers' => $headers,
-                'query' => $parameters,
-            ]);
+        $r = $client->request('POST', env("AZURE_CV_BASE_URL") . "analyze?visualFeatures=Categories,Description,Color", [
+            'body' => $contents,
+            'headers' => $headers,
+        ]);
 
-            return Response::json(json_decode($r->getBody()));
-        } catch (GuzzleException $e) {
-            return Response::json(array(
-                "success" => false
-            ));
-
-        }
+        return Response::json(json_decode($r->getBody()));
 
 
     }
