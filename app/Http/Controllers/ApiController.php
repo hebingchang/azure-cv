@@ -130,6 +130,8 @@ class ApiController extends Controller
     {
         $offset = $request->input('offset');
         $limit = $request->input('limit');
+        $is_correct = $request->input('is_correct');
+
         $openid = \Illuminate\Support\Facades\Request::header('openid');
 
         if (!isset($offset)) {
@@ -140,17 +142,31 @@ class ApiController extends Controller
             $limit = 10;
         }
 
-        $count = Record::where("openid", $openid)->count();
-        $is_end = (($offset + $limit) >= $count);
+        if ($is_correct == true) {
+            $count = Record::where("openid", $openid)->where("correct", true)->count();
+            $is_end = (($offset + $limit) >= $count);
 
-        return Response::json([
-            "success" => true,
-            "is_end" => $is_end,
-            "data" => Record::where("openid", $openid)
-                ->offset($offset)
-                ->limit($limit)
-                ->get()
-        ]);
+            return Response::json([
+                "success" => true,
+                "is_end" => $is_end,
+                "data" => Record::where("openid", $openid)->where("correct", true)
+                    ->offset($offset)
+                    ->limit($limit)
+                    ->get()
+            ]);
+        } else {
+            $count = Record::where("openid", $openid)->count();
+            $is_end = (($offset + $limit) >= $count);
+
+            return Response::json([
+                "success" => true,
+                "is_end" => $is_end,
+                "data" => Record::where("openid", $openid)
+                    ->offset($offset)
+                    ->limit($limit)
+                    ->get()
+            ]);
+        }
     }
 
     public function apiPicture(Request $request)
