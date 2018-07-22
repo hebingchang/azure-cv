@@ -178,4 +178,16 @@ class ApiController extends Controller
         return Image::make($path)->response();
 
     }
+
+    public function apiAudio(Request $request)
+    {
+        $client = new GuzzleHttp\Client();
+        $words = $request->input("words");
+
+        $response = $client->get('http://dict.youdao.com/dictvoice?audio=' . urlencode($words));
+
+        return response($response->getBody())
+            ->header('Content-Type', $response->getHeader("Content-Type"));
+
+    }
 }
