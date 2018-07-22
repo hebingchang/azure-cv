@@ -155,7 +155,7 @@ class ApiController extends Controller
 
     public function apiPicture(Request $request)
     {
-        $picture_id = $request->input('picture_id');
+        $picture_id = $request->picture_id;
 
         $path = storage_path("app/uploads/" . $picture_id);
 

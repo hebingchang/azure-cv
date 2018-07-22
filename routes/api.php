@@ -21,4 +21,4 @@ Route::post('/question/answer', "ApiController@uploadPhoto");
 Route::post('/question/new', "ApiController@getQuestion");
 Route::post('/openid', "ApiController@apiOpenid");
 Route::post('/question/history', "ApiController@apiHistory");
-Route::post('/picture/get', "ApiController@apiPicture");
+Route::get('/picture/get/{picture_id}', "ApiController@apiPicture");
